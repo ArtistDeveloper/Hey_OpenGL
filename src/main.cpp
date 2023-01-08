@@ -1,7 +1,7 @@
-#include <spdlog/spdlog.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
+// #include <spdlog/spdlog.h>
+// #include <glad/glad.h>
+// #include <GLFW/glfw3.h>
+#include "common.h"
 #include <iostream>
 
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height)

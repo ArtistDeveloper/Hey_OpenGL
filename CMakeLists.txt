@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.14)
 
 # set: 변수세팅 
-set(PROJECT_NAME first_opengl_project) # PROJECT_NAME에다가 cmake_project_example 세팅 
+set(PROJECT_NAME opengl_project) # PROJECT_NAME에다가 cmake_project_example 세팅 
 set(CMAKE_CXX_STANDARD 17)
 
-set(WINDOW_NAME "First OpenGL Example!")
+set(WINDOW_NAME "OpenGL Example")
 set(WINDOW_WIDTH 960)
 set(WINDOW_HEIGHT 540)
 
@@ -12,6 +12,7 @@ project(${PROJECT_NAME}) # 이 아래부터 이런 프로젝트 이름의 세팅
 add_executable(${PROJECT_NAME} src/main.cpp) # 이 프로젝트 이름의 실행파일을 만들 것인데, 그 뒤에 붙어있는 모든 소스파일을 다 컴파일해서 실행파일을 만들겠다.
 
 include(Dependency.cmake)
+
 
 # 우리 프로젝트에 include / lib 관련 옵션 추가 # 라이브러리를 다운 받은 다음 우리 프로젝트에서 사용하겠다. # 실행 파일이름이 타겟
 target_include_directories(${PROJECT_NAME} PUBLIC ${DEP_INCLUDE_DIR}) # 헤더파일 위치 연결
