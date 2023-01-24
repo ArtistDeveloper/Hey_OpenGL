@@ -1,8 +1,10 @@
-// #include <spdlog/spdlog.h>
-// #include <glad/glad.h>
-// #include <GLFW/glfw3.h>
 #include "common.h"
-#include <iostream>
+#include "shader.h"
+
+#include <spdlog/spdlog.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height)
 {
@@ -62,6 +64,11 @@ int main(int argc, const char** argv)
     // 위에까지 완료되면 GL함수 사용가능.
     const GLubyte* glVersion = glGetString(GL_VERSION);
     SPDLOG_INFO("OpenGL context version: {}", (const char*)glVersion); 
+
+    auto vertexShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
+    auto fragmentShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
+    SPDLOG_INFO("vertex shader id: {}", vertexShader->Get());
+    SPDLOG_INFO("fragment shader id: {}", fragmentShader->Get());
 
     // glContext와 openGL 로딩이 된 후에 콜백을 glfw쪽에서 호출 될 수 있도록 만들어 주어야 함.
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);

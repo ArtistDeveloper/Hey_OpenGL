@@ -9,7 +9,11 @@ set(WINDOW_WIDTH 960)
 set(WINDOW_HEIGHT 540)
 
 project(${PROJECT_NAME}) # 이 아래부터 이런 프로젝트 이름의 세팅을 할 것이다.
-add_executable(${PROJECT_NAME} src/main.cpp) # 이 프로젝트 이름의 실행파일을 만들 것인데, 그 뒤에 붙어있는 모든 소스파일을 다 컴파일해서 실행파일을 만들겠다.
+add_executable(${PROJECT_NAME} # 이 프로젝트 이름의 실행파일을 만들 것인데, 그 뒤에 붙어있는 모든 소스파일을 다 컴파일해서 실행파일을 만들겠다. 
+    src/main.cpp 
+    src/common.cpp src/common.h
+    src/shader.cpp src/shader.h
+    ) 
 
 include(Dependency.cmake)
 
