@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-// CLASS_PTR(Shader)를 호출하면 이와 같은 형태가 나온다.
+// --CLASS_PTR(Shader)를 호출하면 이와 같은 형태가 나온다.-- //
 // class Shader;
 // using ShaderUPtr = std::unique_ptr<Shader>;
 // using ShaderPtr = std::shared_ptr<Shader>;

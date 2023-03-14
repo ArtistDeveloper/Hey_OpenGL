@@ -1,9 +1,9 @@
 #include "common.h"
 #include "shader.h"
 
-#include <spdlog/spdlog.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+// #include <spdlog/spdlog.h>
+// #include <glad/glad.h>
+// #include <GLFW/glfw3.h>
 
 
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height)
@@ -32,7 +32,7 @@ int main(int argc, const char** argv)
 {
     SPDLOG_INFO("Start Program");
     
-    // glfw 라이브러리 초기화, 실패하면 에러 출력후 종료, glfwInit 함수가 라이브러리 초기화해주는 역할을 함
+    // glfw 라이브러리 초기화, 실패하면 에러 출력후 종료, glfwInit 함수가 라이브러리 초기화해주는 역할
     SPDLOG_INFO("Initialize glfw");
     if (!glfwInit()) {
         const char* description = nullptr;
@@ -80,7 +80,7 @@ int main(int argc, const char** argv)
     while (!glfwWindowShouldClose(window)) {
         // 창은 기본적으로 1/60초 마다 그려지게 되는데, 그 이벤트들을 모아놨다가 실행. 어쨌든 이벤트를 기다리는 코드
         glfwPollEvents(); // 윈도우와 관렫뇐 다양한 이벤트들이 있을텐데, 그것들을 수집하는 역할을 하는 함수이다.
-        glClearColor(0.0f, 0.1f, 0.2f, 0.0f); // 화면을 지울 떄 무슨 색으로 지울까를 설정.
+        glClearColor(0.0f, 0.1f, 0.2f, 0.0f); // 화면을 지울 때 무슨 색으로 지울까를 설정.
         glClear(GL_COLOR_BUFFER_BIT); // 실제로 프레임버퍼를 clear하는 함수. GL_COLOR_BUFFER_BIT: 화면에 보이는 색상 버퍼를 의미. 색상이 들어갈 화면을 지운다.
         glfwSwapBuffers(window); // front, back buffer 번갈아가며 그림.(double buffering이라고도 함.)
     }
