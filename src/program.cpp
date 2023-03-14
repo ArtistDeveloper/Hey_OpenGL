@@ -9,18 +9,26 @@ ProgramUPtr Program::Create(const std::vector<ShaderPtr> &shaders)
     return std::move(program);
 }
 
+Program::~Program()
+{
+    if (m_program)
+    {
+        glDeleteProgram(m_program);
+    }
+}
+
 bool Program::Link(const std::vector<ShaderPtr> &shaders)
 {
     m_program = glCreateProgram();
 
     // vertex, fragment shader가 attach된 후에 link를 시도함
     for (auto &shader : shaders)
-        glAttachShader(m_program, shader->Get()); 
+        glAttachShader(m_program, shader->Get());
     glLinkProgram(m_program);
 
     // glGetProgramiv를 통해 LINK_SATUS의 성공실패를 받아올 수 있음
     int success = 0;
-    glGetProgramiv(m_program, GL_LINK_STATUS, &success); 
+    glGetProgramiv(m_program, GL_LINK_STATUS, &success);
     if (!success)
     {
         char infoLog[1024];
