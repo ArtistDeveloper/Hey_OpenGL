@@ -21,8 +21,8 @@ bool Context::Init()
 
     uint32_t indices[] = // note that we start from 0!
     { 
-        0, 1, 3, // first triangle
-        1, 2, 3, // second triangle
+        0, 1, 3,
+        1, 2, 3,
     };
 
     // VAO 생성 : 무조건 buffer object만들기 전에 생성
@@ -66,5 +66,5 @@ void Context::Render()
     glClear(GL_COLOR_BUFFER_BIT);
 
     m_program->Use();
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // incides가 uint이므로 uint로 설정
+    glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0); // incides가 uint이므로 uint로 설정
 }
