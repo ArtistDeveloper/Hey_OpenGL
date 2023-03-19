@@ -29,11 +29,9 @@ bool Context::Init()
     glGenVertexArrays(1, &m_vertexArrayObject);
     glBindVertexArray(m_vertexArrayObject);
 
-    // VBO 생성 : 
-    glGenBuffers(1, &m_vertexBuffer);    
-    // GL_ARRAY_BUFFER: vertex buffer object임. position, color등이 들어가는 buffer라고 명시해서 바인딩해주는 것
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer); 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, vertices, GL_STATIC_DRAW); // 바인딩되어 있는 버퍼에 데이터를 복사. 즉, 무조건 먼저 바인딩 해줘야 함.
+    // VBO 생성
+    m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER, GL_STATIC_DRAW,
+                                            vertices, sizeof(float) * 12);
 
     // VAO attribute setting : 
     glEnableVertexAttribArray(0); // 0번 arrtribute 사용
@@ -41,9 +39,8 @@ bool Context::Init()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0); 
 
     // EBO : 어차피 인덱스는 정수값이 들어올 것이라고 알고 있으니까, 따로 VAO 세팅을 할 필요가 없다.
-    glGenBuffers(1, &m_indexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6, indices, GL_STATIC_DRAW);
+    m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, 
+                                           GL_STATIC_DRAW, indices, sizeof(uint32_t) * 6);
 
     ShaderPtr vertShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
     ShaderPtr fragShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
@@ -68,6 +65,6 @@ void Context::Render()
     // 색상이 들어갈 화면을 지운다.
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(m_program->Get());
+    m_program->Use();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // incides가 uint이므로 uint로 설정
 }

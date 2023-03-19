@@ -9,6 +9,11 @@ ProgramUPtr Program::Create(const std::vector<ShaderPtr> &shaders)
     return std::move(program);
 }
 
+void Program::Use() const
+{
+    glUseProgram(m_program);
+}
+
 Program::~Program()
 {
     if (m_program)

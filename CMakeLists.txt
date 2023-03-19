@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME} # 이 프로젝트 이름의 실행파일을 만�
     src/shader.cpp src/shader.h
     src/program.cpp src/program.h
     src/context.cpp src/context.h
+    src/buffer.cpp src/buffer.h
     ) 
 
 include(Dependency.cmake)
