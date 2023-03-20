@@ -26,17 +26,14 @@ bool Context::Init()
     };
 
     // VAO 생성 : 무조건 buffer object만들기 전에 생성
-    glGenVertexArrays(1, &m_vertexArrayObject);
-    glBindVertexArray(m_vertexArrayObject);
+    m_vertexLayout = VertexLayout::Create();
 
     // VBO 생성
     m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER, GL_STATIC_DRAW,
                                             vertices, sizeof(float) * 12);
-
-    // VAO attribute setting : 
-    glEnableVertexAttribArray(0); // 0번 arrtribute 사용
-    // 0번 arrtibute는 값이 3개고, float값이고, normalizing 할 필요없고, stride의 크기 설정하고, offset은 0부터 시작한다.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0); 
+    
+    // VAO attribute setting 
+    m_vertexLayout->SetAttrib(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
     // EBO : 어차피 인덱스는 정수값이 들어올 것이라고 알고 있으니까, 따로 VAO 세팅을 할 필요가 없다.
     m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, 
