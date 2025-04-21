@@ -1,3 +1,4 @@
+# spdlog
 # ExternalProject 관련 명령어 셋 추가
 include(ExternalProject)
 
@@ -7,7 +8,7 @@ set(DEP_LIB_DIR ${DEP_INSTALL_DIR}/lib)
 
 
 ExternalProject_Add(
-    dep-spdlog # 타겟의 이름
+    dep_spdlog # 타겟의 이름
     GIT_REPOSITORY "https://github.com/gabime/spdlog.git"
     GIT_TAG "v1.x"
     GIT_SHALLOW 1
@@ -16,7 +17,25 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${DEP_INSTALL_DIR}
     TEST_COMMAND "" # 라이브러리 대상 자동 테스트 실행 관련
 )
-
 # Dependency 리스트 및 라이브러리 파일 리스트 추가
-set(DEP_LIST ${DEP_LIST} dep-spdlog) # DEP_LIST에 dep-spdlog 값 추가
+set(DEP_LIST ${DEP_LIST} dep_spdlog) # DEP_LIST에 dep-spdlog 값 추가
 set(DEP_LIBS ${DEP_LIBS} spdlog$<$<CONFIG:Debug>:d>)
+
+
+# glfw
+ExternalProject_Add(
+    dep_glfw
+    GIT_REPOSITORY "https://github.com/glfw/glfw.git"
+    GIT_TAG "3.3.3"
+    GIT_SHALLOW 1
+    UPDATE_COMMAND ""
+    PATCH_COMMAND ""
+    TEST_COMMAND ""
+    CMAKE_ARGS
+        -DCMAKE_INSTALL_PREFIX=${DEP_INSTALL_DIR}
+        -DGLFW_BUILD_EXAMPLES=OFF
+        -DGLFW_BUILD_TESTX=OFF
+        -DGLFW_BUILD_DOCS=OFF
+)
+set(DEP_LIST ${DEP_LIST} dep_glfw)
+set(DEP_LIBS ${DEP_LIBS} glfw3)

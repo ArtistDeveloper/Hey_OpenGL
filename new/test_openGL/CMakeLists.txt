@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.17)
 set(PROJECT_NAME cmake_project_example)
 set(CMAKE_CXX_STANDARD 17)
 
+set(WINDOW_NAME "Hello, OpenGL!")
+set(WINDOW_WIDTH 960)
+set(WINDOW_HEIGHT 540)
+
 project(${PROJECT_NAME})
 add_executable(${PROJECT_NAME} src/main.cpp)
 
@@ -14,6 +18,12 @@ target_link_directories(${PROJECT_NAME} PUBLIC ${DEP_LIB_DIR}) # 우리 타겟(�
 target_link_libraries(${PROJECT_NAME} PUBLIC ${DEP_LIBS}) # 실제로 어떤 라이브러리를 사용할지를 지정
 # 즉, target_link_libraries는 install/lib/"spdlogd".lib 라이브러리 파일을 가지고 오게 된다.
 # target_link_libraries 지정할 때는 .lib 빼고 지정하면 된다
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    WINDOW_NAME="${WINDOW_NAME}"
+    WINDOW_WIDTH=${WINDOW_WIDTH}
+    WINDOW_HEIGHT=${WINDOW_HEIGHT}
+)
 
 # Dependency 들이 먼저 build 될 수 있게 관계 설정
 # 프로젝트 컴파일을 하기 전에, DEP_LIST안에 들어가있는 타겟들을 모두 컴파일 한 다음에 우리 프로젝트를 컴파일 하라

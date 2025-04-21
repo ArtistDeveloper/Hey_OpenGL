@@ -1,0 +1,4 @@
+{
+    "cmake.sourceDirectory": "D:/Development/Practices/OpenGL/Hey_OpenGL/new/test_openGL",
+    "cmake.buildDirectory": "${workspaceFolder}/new/test_openGL/build"
+}
