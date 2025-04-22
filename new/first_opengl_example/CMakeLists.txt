@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.17)
 
-set(PROJECT_NAME cmake_project_example)
+set(PROJECT_NAME first_opengl_example)
 set(CMAKE_CXX_STANDARD 17)
 
-set(WINDOW_NAME "Hello, OpenGL!")
+set(WINDOW_NAME "First, OpenGL Example")
 set(WINDOW_WIDTH 960)
 set(WINDOW_HEIGHT 540)
 
