@@ -1,4 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/Development/Practices/OpenGL/Hey_OpenGL/new/first_opengl_example",
-    "cmake.buildDirectory": "${workspaceFolder}/new/first_opengl_example/build"
+    "cmake.sourceDirectory": "D:/Development/Practices/OpenGL/Hey_OpenGL/new/opengl_example",
+    "cmake.buildDirectory": "${workspaceFolder}/new/opengl_example/build"
 }
