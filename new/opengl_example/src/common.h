@@ -12,6 +12,12 @@
 #include <glfw/glfw3.h>
 #include <spdlog/spdlog.h>
 
+#define CLASS_PTR(klassName) \
+class klassName; \
+using klassName ## UPtr = std::unique_ptr<klassName>; \
+using klassName ## Ptr = std::shared_ptr<klassName>; \
+using klassName ## WPtr = std::weak_ptr<klassName>;
+
 // optional: 어떤 값이 있거나 없는 경우를 포인터없이 표현 가능
 // 만약 TextFile이 없었을 때 빈 문자열을 return 하도록 하면 TextFild이 존재하지만 안에 내용이 없을 때의 경우를
 // 커버하지 못한다. 그러므로 C에서는 포인터를 사용해서 string*을 return하도록 만든다.
