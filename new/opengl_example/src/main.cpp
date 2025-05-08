@@ -1,6 +1,4 @@
-#include "common.h"
-#include "shader.h"
-#include "program.h"
+#include "context.h"
 
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> // glfw.h 이전에 glad를 추가해야 한다
@@ -78,13 +76,13 @@ int main(int argc, const char **argv)
     auto glVersion = glGetString(GL_VERSION);
     SPDLOG_INFO("OpenGL context version: {}", reinterpret_cast<const char *>(glVersion));
 
-    ShaderPtr vertShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
-    ShaderPtr fragShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
-    SPDLOG_INFO("vertex shader id: {}", vertShader->Get());
-    SPDLOG_INFO("fragment shader id: {}", fragShader->Get());
-
-    auto program = Program::Create({fragShader, vertShader});
-    SPDLOG_INFO("program id: {}", program->Get());
+    auto context = Context::Create();
+    if (!context)
+    {
+        SPDLOG_ERROR("failed to create context");
+        glfwTerminate();
+        return -1;
+    }
 
     // 윈도우 생성 직후 프레임버퍼 변경 이벤트가 발생하지 않으므로, 첫 호출은 수동으로
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -99,15 +97,17 @@ int main(int argc, const char **argv)
         // 이벤트가 발생하였는지 확인하고 윈도우 상태를 업데이트.
         // 이벤트를 처리하면 해당 이벤트와 관련된 콜백을 호출한다
         glfwPollEvents();
-        glClearColor(0.0f, 0.1f, 0.2f, 0.0f); // 색상 설정
         // 실제로 프레임버퍼 클리어하는 함수
         // 여기선 색상 버퍼를 클리어 하겠다는 의미. (한 번만 세팅해도 됨)
-        glClear(GL_COLOR_BUFFER_BIT);
+        // glClearColor를 통해 설정된 색상을 통해 버퍼 클리어
+        context->Render();
         // 프레임 버퍼 2개를 준비 (더블버퍼링)
         // back buffer에 그림을 그리고, front와 back을 바꿔치기 한다. 이 과정을 계속 반복
         // front buffer에만 그림을 그리면 그림이 그려지는 과정이 노출되는데 이를 방지
         glfwSwapBuffers(window);
     }
+    // 아래 방법 말고 context = nullptr; 하는 방법도 존재
+    context.reset(); // unique_ptr의 reset()을 호출하여 메모리 정리
     glfwTerminate();
 
     return 0;

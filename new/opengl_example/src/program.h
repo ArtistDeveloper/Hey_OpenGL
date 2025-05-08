@@ -19,4 +19,4 @@ private:
     uint32_t m_program{0};
 };
 
-#endif __PROGRAM_H__
+#endif // __PROGRAM_H__
