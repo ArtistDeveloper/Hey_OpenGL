@@ -76,10 +76,10 @@ int main(int argc, const char **argv)
     auto glVersion = glGetString(GL_VERSION);
     SPDLOG_INFO("OpenGL context version: {}", reinterpret_cast<const char *>(glVersion));
 
-    // auto vertexShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
-    // auto fragmentShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
-    // SPDLOG_INFO("vertex shader id: {}", vertexShader->Get());
-    // SPDLOG_INFO("fragment shader id: {}", fragmentShader->Get());
+    auto vertexShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
+    auto fragmentShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
+    SPDLOG_INFO("vertex shader id: {}", vertexShader->Get());
+    SPDLOG_INFO("fragment shader id: {}", fragmentShader->Get());
 
     // 윈도우 생성 직후 프레임버퍼 변경 이벤트가 발생하지 않으므로, 첫 호출은 수동으로
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
