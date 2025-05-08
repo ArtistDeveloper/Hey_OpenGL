@@ -1,3 +1,5 @@
+#include "common.h"
+#include "shader.h"
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> // glfw.h 이전에 glad를 추가해야 한다
 #include <GLFW/glfw3.h>
@@ -74,6 +76,11 @@ int main(int argc, const char **argv)
     auto glVersion = glGetString(GL_VERSION);
     SPDLOG_INFO("OpenGL context version: {}", reinterpret_cast<const char *>(glVersion));
 
+    // auto vertexShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
+    // auto fragmentShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
+    // SPDLOG_INFO("vertex shader id: {}", vertexShader->Get());
+    // SPDLOG_INFO("fragment shader id: {}", fragmentShader->Get());
+
     // 윈도우 생성 직후 프레임버퍼 변경 이벤트가 발생하지 않으므로, 첫 호출은 수동으로
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
@@ -90,11 +97,11 @@ int main(int argc, const char **argv)
         glClearColor(0.0f, 0.1f, 0.2f, 0.0f); // 색상 설정
         // 실제로 프레임버퍼 클리어하는 함수
         // 여기선 색상 버퍼를 클리어 하겠다는 의미. (한 번만 세팅해도 됨)
-        glClear(GL_COLOR_BUFFER_BIT); 
+        glClear(GL_COLOR_BUFFER_BIT);
         // 프레임 버퍼 2개를 준비 (더블버퍼링)
         // back buffer에 그림을 그리고, front와 back을 바꿔치기 한다. 이 과정을 계속 반복
-        // front buffer에만 그림을 그리면 그림이 그려지는 과정이 노출되는데 이를 방지 
-        glfwSwapBuffers(window); 
+        // front buffer에만 그림을 그리면 그림이 그려지는 과정이 노출되는데 이를 방지
+        glfwSwapBuffers(window);
     }
     glfwTerminate();
 
