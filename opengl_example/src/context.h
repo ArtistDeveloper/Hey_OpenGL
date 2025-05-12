@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "shader.h"
+#include "buffer.h"
 #include "program.h"
 
 // 프로그램이 완전 종료가 되기 직전 메모리를 한 번에 정리하는게 좋음
@@ -20,8 +21,8 @@ private:
     ProgramUPtr m_program;
 
     uint32_t m_vertexArrayObject;
-    uint32_t m_vertexBuffer;
-    uint32_t m_indexBuffer;
+    BufferUPtr m_vertexBuffer;
+    BufferUPtr m_indexBuffer;
 };
 
 #endif // __CONTEXT_H__

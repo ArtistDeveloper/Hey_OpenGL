@@ -25,14 +25,7 @@ bool Context::Init()
     glGenVertexArrays(1, &m_vertexArrayObject);
     glBindVertexArray(m_vertexArrayObject);
 
-    glGenBuffers(1, &m_vertexBuffer); // Buffer Object를 생성
-    // 지금부터 사용할 buffer object 지정하며 버퍼 오브젝트의 용도를 지정. GL_ARRAY_BUFFER는 VBO로 사용됨을 지정.
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-    // 바인딩한 버퍼 오브젝트에 실제로 데이터를 복사
-    // GL_STATIC_DRAW: GPU 버퍼에 값을 세팅하고 다시는 변경하지 않을 것임을 명시
-    // GL_DYANMIC_DRAW: 값을 변경할 여지가 있음을 명시
-    // GL_STREAM:DRAW: 값을 한 번 사용한 뒤 바로 버릴 예정임을 명시
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, vertices, GL_STATIC_DRAW);
+    m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(float) * 12);
 
     glEnableVertexAttribArray(0); // 0번 버텍스 어레이를 사용
     // 0번 어트리뷰트는 vertex shader의 location = 0과 연결됨
@@ -42,9 +35,7 @@ bool Context::Init()
     // offset은 0번부터 시작한다
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
-    glGenBuffers(1, &m_indexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6, indices, GL_STATIC_DRAW);
+    m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(uint32_t) * 6);
 
     ShaderPtr vertShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
     ShaderPtr fragShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
@@ -67,8 +58,6 @@ void Context::Render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(m_program->Get());
-    // 어떤 타입으로 그림, 몇 번째 점부터 그릴지(정점 index), 몇 개의 점을 그릴지
-    // glDrawArrays(GL_TRIANGLES, 0, 6);
+    m_program->Use();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
