@@ -22,19 +22,10 @@ bool Context::Init()
         1, 2, 3, // second triangle
     };
 
-    glGenVertexArrays(1, &m_vertexArrayObject);
-    glBindVertexArray(m_vertexArrayObject);
+    m_vertexLayout = VertexLayout::Create();
 
     m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(float) * 12);
-
-    glEnableVertexAttribArray(0); // 0번 버텍스 어레이를 사용
-    // 0번 어트리뷰트는 vertex shader의 location = 0과 연결됨
-    // 0번 어트리뷰트가 생긴 형태는 float값이 3개이고, (0, 3, GL_FLOAT)
-    // normalizing 안해도 되고 (GL_FALSE)
-    // STRIDE의 크기 설정: sizeof(float) * 3
-    // offset은 0번부터 시작한다
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
-
+	m_vertexLayout->SetAttrib(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
     m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(uint32_t) * 6);
 
     ShaderPtr vertShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);

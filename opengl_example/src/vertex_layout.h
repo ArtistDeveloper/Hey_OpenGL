@@ -4,7 +4,8 @@
 #include "common.h"
 
 CLASS_PTR(VertexLayout)
-class VertexLayout {
+class VertexLayout
+{
 public:
     static VertexLayoutUPtr Create();
     ~VertexLayout();
@@ -19,8 +20,8 @@ public:
 
 private:
     VertexLayout() {}
-    void Init();
-    uint32_t m_vertexArrayObject { 0 };
+    void Init(); // VertexLayout의 초기화는 무조건 성공하기에 return 값이 존재하지 않음
+    uint32_t m_vertexArrayObject{0};
 };
 
 #endif // __VERTEX_LAYOUT_H__

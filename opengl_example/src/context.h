@@ -5,6 +5,7 @@
 #include "shader.h"
 #include "buffer.h"
 #include "program.h"
+#include "vertex_layout.h"
 
 // 프로그램이 완전 종료가 되기 직전 메모리를 한 번에 정리하는게 좋음
 // 이를 위해 Context 클래스에서 한 번에 묶어 관리
@@ -20,7 +21,7 @@ private:
     bool Init();
     ProgramUPtr m_program;
 
-    uint32_t m_vertexArrayObject;
+    VertexLayoutUPtr m_vertexLayout;
     BufferUPtr m_vertexBuffer;
     BufferUPtr m_indexBuffer;
 };
