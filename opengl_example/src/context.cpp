@@ -11,10 +11,15 @@ ContextUPtr Context::Create()
 bool Context::Init()
 {
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f,
-    };
+        // first triangle
+        0.5f, 0.5f, 0.0f, // top right
+        0.5f, -0.5f, 0.0f, // bottom right
+        -0.5f, 0.5f, 0.0f, // top left
+        // second triangle
+        0.5f, -0.5f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f, // bottom left
+        -0.5f, 0.5f, 0.0f // top left
+     };
 
     glGenVertexArrays(1, &m_vertexArrayObject);
     glBindVertexArray(m_vertexArrayObject);
@@ -26,10 +31,10 @@ bool Context::Init()
      // GL_STATIC_DRAW: GPU 버퍼에 값을 세팅하고 다시는 변경하지 않을 것임을 명시
      // GL_DYANMIC_DRAW: 값을 변경할 여지가 있음을 명시
      // GL_STREAM:DRAW: 값을 한 번 사용한 뒤 바로 버릴 예정임을 명시
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 9, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 18, vertices, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0); // 0번 버텍스 어레이를 사용
-    // 0번 어트리뷰트는 셰이더의 location = 0과 연결됨
+    // 0번 어트리뷰트는 vertex shader의 location = 0과 연결됨
     // 0번 어트리뷰트가 생긴 형태는 float값이 3개이고, (0, 3, GL_FLOAT)
     // normalizing 안해도 되고 (GL_FALSE)
     // STRIDE의 크기 설정: sizeof(float) * 3
@@ -59,5 +64,6 @@ void Context::Render()
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(m_program->Get());
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // 어떤 타입으로 그림, 몇 번째 점부터 그릴지(정점 index), 몇 개의 점을 그릴지
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
