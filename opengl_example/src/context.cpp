@@ -39,6 +39,11 @@ bool Context::Init()
     if (!m_program)
         return false;
     SPDLOG_INFO("program id: {}", m_program->Get());
+    
+    // 셰이더 내부 코드를 고치지 않고도 CPP코드에서 값을 세팅할 수 있음
+	auto loc = glGetUniformLocation(m_program->Get(), "color"); // 여기서 문자열 color는 simple.fs의 unfirom 변수명을 뜻함
+    m_program->Use();
+    glUniform4f(loc, 0.0f, 1.0f, 0.0f, 1.0f);
 
     glClearColor(0.0f, 0.1f, 0.2f, 0.0f); // 색상 설정
 

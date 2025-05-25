@@ -3,12 +3,9 @@
 // 0번째 attrubte가 정점의 위치
 layout (location = 0) in vec3 aPos;
 
-out vec4 vertexColor;
-
 // 모든 정점마다 개별적으로 실행될 함수
 // 정점의 위치 설정
 // normalizing된 좌표계 사용
 void main() {
   gl_Position = vec4(aPos, 1.0); // vec3를 vec4 생성자에 사용
-  vertexColor = vec4(0.5, 0.0, 0.0, 1.0); // 어두운 빨간색으로 출력
 }
