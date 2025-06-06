@@ -16,7 +16,7 @@ bool Context::Init()
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // top right, red
         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom right, green
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left, blue
-        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f,  0.0f, 1.0f, // top left, yellow
+        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,  // top left, yellow
     };
     uint32_t indices[] = {
         // note that we start from 0!
@@ -52,6 +52,19 @@ bool Context::Init()
     SPDLOG_INFO("image: {}x{}, {} channels", image->GetWidth(), image->GetHeight(), image->GetChannelCount());
 
     m_texture = Texture::CreateFromImage(image.get());
+
+    auto image2 = Image::Load("./image/awesomeface.png");
+    m_texture2 = Texture::CreateFromImage(image2.get());
+
+    glActiveTexture(GL_TEXTURE0); // 텍스처 슬롯 번호를 알려줌
+    glBindTexture(GL_TEXTURE_2D, m_texture->Get()); // 0번 슬롯에 세팅하려는 텍스처는 2D이고, ID값을 전달
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_texture2->Get());
+
+    m_program->Use();
+    // texture id를 unifrom에 전달하는 것이 아님. 슬롯 번호를 전달
+    glUniform1i(glGetUniformLocation(m_program->Get(), "tex"), 0); // 0번 슬롯을 사용할 것이라 명시
+    glUniform1i(glGetUniformLocation(m_program->Get(), "tex2"), 1); // 1번 슬롯을 사용할 것이라 명시
 
     return true;
 }

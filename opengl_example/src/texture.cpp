@@ -37,8 +37,8 @@ void Texture::CreateTexture()
 {
     glGenTextures(1, &m_texture); // 텍스처 오브젝트 1개 생성
     // bind and set default filter and wrap option
-    Bind();
-    SetFilter(GL_LINEAR, GL_LINEAR);
+    Bind(); 
+    SetFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
     SetWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 }
 
@@ -72,4 +72,7 @@ void Texture::SetTextureFromImage(const Image *image)
                  image->GetWidth(), image->GetHeight(), 0,
                  format, GL_UNSIGNED_BYTE,
                  image->GetData());
+
+    // GPU에 복사된 이미지를 바탕으로 자동으로 1번, 2번 레벨의 이미지 등을 자동으로 생성해줌
+    glGenerateMipmap(GL_TEXTURE_2D);
 }
