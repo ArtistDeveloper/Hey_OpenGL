@@ -11,26 +11,57 @@ ContextUPtr Context::Create()
 
 bool Context::Init()
 {
-    // [x, y, z, r, g, b, s, t]
+    // [x, y, z, s, t] - s, t: texture 좌표
+    // 하나의 점마다 5개의 float값이 있어야 하고, 그런 점이 각 면마다 4개씩 존재
+    // 그리고 총 6면이 있으니 24개의 점이 존재
     float vertices[] = {
-        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // top right, red
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom right, green
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left, blue
-        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,  // top left, yellow
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
+
+        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+
+        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+
+        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
     };
+
+    // 한 면당 2개의 삼각형이 필요. 총 12개의 삼각형 필요
     uint32_t indices[] = {
-        // note that we start from 0!
-        0, 1, 3, // first triangle
-        1, 2, 3, // second triangle
+        0,  2,  1,  2,  0,  3,
+        4,  5,  6,  6,  7,  4,
+        8,  9, 10, 10, 11,  8,
+        12, 14, 13, 14, 12, 15,
+        16, 17, 18, 18, 19, 16,
+        20, 22, 21, 22, 20, 23,
     };
 
     m_vertexLayout = VertexLayout::Create();
-
-    m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(float) * 32);
-    m_vertexLayout->SetAttrib(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
-    m_vertexLayout->SetAttrib(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, sizeof(float) * 3);
-    m_vertexLayout->SetAttrib(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, sizeof(float) * 6);
-    m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(uint32_t) * 6);
+    // 5 * 24 = 120
+    m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(float) * 120);
+    m_vertexLayout->SetAttrib(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+    m_vertexLayout->SetAttrib(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, sizeof(float) * 3);
+    m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(uint32_t) * 36);
 
     ShaderPtr vertShader = Shader::CreateFromFile("./shader/texture.vs", GL_VERTEX_SHADER);
     ShaderPtr fragShader = Shader::CreateFromFile("./shader/texture.fs", GL_FRAGMENT_SHADER);
@@ -62,9 +93,8 @@ bool Context::Init()
     glBindTexture(GL_TEXTURE_2D, m_texture2->Get());
 
     m_program->Use();
-    // texture id를 unifrom에 전달하는 것이 아님. 슬롯 번호를 전달
-    glUniform1i(glGetUniformLocation(m_program->Get(), "tex"), 0);  // 0번 슬롯을 사용할 것이라 명시
-    glUniform1i(glGetUniformLocation(m_program->Get(), "tex2"), 1); // 1번 슬롯을 사용할 것이라 명시
+    m_program->SetUniform("tex", 0);
+    m_program->SetUniform("tex2", 1);
 
     // x축으로 -55도 회전
     auto model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -77,20 +107,16 @@ bool Context::Init()
     auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 10.0f);
 
     auto transform = projection * view * model;
-
-    auto transformLoc = glGetUniformLocation(m_program->Get(), "transform");
-    // 첫 번째: location 번호, 두 번째: 매트릭스가 몇 개 들어갈지(배열도 들어갈 수 있어서)
-    // 세 번째: 전치가 되어 있는지 아닌지,
-    // 네 번째: transform은 float값을 16개를 저장되어있음. 그 값의 첫 번째 위치를 value_ptr을 통해 주소값을 전달
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+    m_program->SetUniform("transform", transform);
 
     return true;
 }
 
 void Context::Render()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
 
     m_program->Use();
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
