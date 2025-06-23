@@ -104,7 +104,7 @@ bool Context::Init()
 
     // 종횡비 4:3, 세로화각 45도의 원근 투영
     // FOV(45도), 종횡비, near, far
-    auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 10.0f);
+    auto projection = glm::perspective(glm::radians(-45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 10.0f);
 
     auto transform = projection * view * model;
     m_program->SetUniform("transform", transform);
@@ -114,9 +114,18 @@ bool Context::Init()
 
 void Context::Render()
 {
+    // glClear를 통해 glClearColor로 지정한 색깔로 전체 컬러 버퍼를 채우며,
+    // GL_DEPTH_BUFFER_BIT 옵션을 줌으로, 해당 z버퍼의 값들을 모두 1.0으로 리셋
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
     m_program->Use();
+
+    auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 10.0f);
+    auto view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+    auto model = glm::rotate(glm::mat4(1.0f), glm::radians((float)glfwGetTime() * 120.0f), glm::vec3(1.0f, 0.5f, 0.0f));
+    auto transform = projection * view * model;
+    m_program->SetUniform("transform", transform);
+
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
