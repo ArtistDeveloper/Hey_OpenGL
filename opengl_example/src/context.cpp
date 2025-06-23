@@ -66,10 +66,18 @@ bool Context::Init()
     glUniform1i(glGetUniformLocation(m_program->Get(), "tex"), 0);  // 0번 슬롯을 사용할 것이라 명시
     glUniform1i(glGetUniformLocation(m_program->Get(), "tex2"), 1); // 1번 슬롯을 사용할 것이라 명시
 
-    // 0.5배 축소 후 z축으로 90도 회전하는 행렬
-    auto transform = glm::rotate(
-        glm::scale(glm::mat4(1.0f), glm::vec3(2.0f)), glm::radians(60.0f), glm::vec3(0.0f, 0.0f, 1.0f)
-    );
+    // x축으로 -55도 회전
+    auto model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    
+    // 카메라는 원점으로부터 z축 방향으로 -3만큼 떨어짐
+    auto view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+
+    // 종횡비 4:3, 세로화각 45도의 원근 투영
+    // FOV(45도), 종횡비, near, far
+    auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 10.0f);
+
+    auto transform = projection * view * model;
+
     auto transformLoc = glGetUniformLocation(m_program->Get(), "transform");
     // 첫 번째: location 번호, 두 번째: 매트릭스가 몇 개 들어갈지(배열도 들어갈 수 있어서)
     // 세 번째: 전치가 되어 있는지 아닌지,
