@@ -56,15 +56,25 @@ bool Context::Init()
     auto image2 = Image::Load("./image/awesomeface.png");
     m_texture2 = Texture::CreateFromImage(image2.get());
 
-    glActiveTexture(GL_TEXTURE0); // 텍스처 슬롯 번호를 알려줌
+    glActiveTexture(GL_TEXTURE0);                   // 텍스처 슬롯 번호를 알려줌
     glBindTexture(GL_TEXTURE_2D, m_texture->Get()); // 0번 슬롯에 세팅하려는 텍스처는 2D이고, ID값을 전달
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_texture2->Get());
 
     m_program->Use();
     // texture id를 unifrom에 전달하는 것이 아님. 슬롯 번호를 전달
-    glUniform1i(glGetUniformLocation(m_program->Get(), "tex"), 0); // 0번 슬롯을 사용할 것이라 명시
+    glUniform1i(glGetUniformLocation(m_program->Get(), "tex"), 0);  // 0번 슬롯을 사용할 것이라 명시
     glUniform1i(glGetUniformLocation(m_program->Get(), "tex2"), 1); // 1번 슬롯을 사용할 것이라 명시
+
+    // 0.5배 축소 후 z축으로 90도 회전하는 행렬
+    auto transform = glm::rotate(
+        glm::scale(glm::mat4(1.0f), glm::vec3(2.0f)), glm::radians(60.0f), glm::vec3(0.0f, 0.0f, 1.0f)
+    );
+    auto transformLoc = glGetUniformLocation(m_program->Get(), "transform");
+    // 첫 번째: location 번호, 두 번째: 매트릭스가 몇 개 들어갈지(배열도 들어갈 수 있어서)
+    // 세 번째: 전치가 되어 있는지 아닌지,
+    // 네 번째: transform은 float값을 16개를 저장되어있음. 그 값의 첫 번째 위치를 value_ptr을 통해 주소값을 전달
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
     return true;
 }

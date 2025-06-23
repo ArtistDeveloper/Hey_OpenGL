@@ -73,3 +73,21 @@ ExternalProject_Add(
         ${DEP_INSTALL_DIR}/include/stb/stb_image.h
     )
 set(DEP_LIST ${DEP_LIST} dep_stb)
+
+# glm
+ExternalProject_Add(
+    dep_glm
+    GIT_REPOSITORY "https://github.com/g-truc/glm"
+    GIT_TAG "0.9.9.8"
+    GIT_SHALLOW 1
+    UPDATE_COMMAND ""
+    PATCH_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    TEST_COMMAND ""
+     #copy_directory 커맨드를 사용해서, glm 디렉토리를 통쨰로 include에 복사
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${PROJECT_BINARY_DIR}/dep_glm-prefix/src/dep_glm/glm
+    ${DEP_INSTALL_DIR}/include/glm
+    )
+set(DEP_LIST ${DEP_LIST} dep_glm)
