@@ -134,11 +134,16 @@ void Context::Render()
 
     m_program->Use();
 
+    // near: z축으로 0~0.01까지 자름, far: 20.0 뒤편에 있는 것도 절삭
     auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 20.0f);
+    // 만약 z축을 view matrix로 -3까지 밀어주지 않으면, 원점에 있는 큐브 중심에 카메라가 들어가있게 됨
     auto view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+    // view 설명: projection * view * model이 존재하는데, 여기서 view의 의미는
+    // model 오브젝트를 그리기 전에, z축으로 3만큼 밀어서 그림을 그리라는 의미가 된다고 함 (실제 행렬에 들어가는 값은 -3이 맞음)
 
     for (size_t i = 0; i < cubePositions.size(); i++){
         auto& pos = cubePositions[i];
+        // model 행렬을 통해 큐브마다 이동과 회전을 적용 (local -> world)
         auto model = glm::translate(glm::mat4(1.0f), pos);
         model = glm::rotate(model, glm::radians((float)glfwGetTime() * 120.0f + 20.0f * (float)i),
             glm::vec3(1.0f, 0.5f, 0.0f));
