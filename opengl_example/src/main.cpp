@@ -97,6 +97,7 @@ int main(int argc, const char **argv)
         // 이벤트가 발생하였는지 확인하고 윈도우 상태를 업데이트.
         // 이벤트를 처리하면 해당 이벤트와 관련된 콜백을 호출한다
         glfwPollEvents();
+        context->ProcessInput(window);
         // 실제로 프레임버퍼 클리어하는 함수
         // 여기선 색상 버퍼를 클리어 하겠다는 의미. (한 번만 세팅해도 됨)
         // glClearColor를 통해 설정된 색상을 통해 버퍼 클리어

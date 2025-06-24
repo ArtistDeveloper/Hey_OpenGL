@@ -9,6 +9,27 @@ ContextUPtr Context::Create()
     return std::move(context);
 }
 
+void Context::ProcessInput(GLFWwindow* window)
+{
+    const float cameraSpeed = 0.05f;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        m_cameraPos += cameraSpeed * m_cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        m_cameraPos -= cameraSpeed * m_cameraFront;
+
+    auto cameraRight = glm::normalize(glm::cross(m_cameraUp, -m_cameraFront));
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        m_cameraPos += cameraSpeed * cameraRight;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        m_cameraPos -= cameraSpeed * cameraRight;    
+
+    auto cameraUp = glm::normalize(glm::cross(-m_cameraFront, cameraRight));
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        m_cameraPos += cameraSpeed * cameraUp;
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        m_cameraPos -= cameraSpeed * cameraUp;
+}
+
 bool Context::Init()
 {
     // [x, y, z, s, t] - s, t: texture 좌표
@@ -96,19 +117,6 @@ bool Context::Init()
     m_program->SetUniform("tex", 0);
     m_program->SetUniform("tex2", 1);
 
-    // x축으로 -55도 회전
-    auto model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    
-    // 카메라는 원점으로부터 z축 방향으로 -3만큼 떨어짐
-    auto view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-
-    // 종횡비 4:3, 세로화각 45도의 원근 투영
-    // FOV(45도), 종횡비, near, far
-    auto projection = glm::perspective(glm::radians(-45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 10.0f);
-
-    auto transform = projection * view * model;
-    m_program->SetUniform("transform", transform);
-
     return true;
 }
 
@@ -137,18 +145,11 @@ void Context::Render()
     // near: z축으로 0~0.01까지 자름, far: 20.0 뒤편에 있는 것도 절삭. far은 너무 큰게 좋지 않다. 이유는 추후 설명
     auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 30.0f);
 
-    // x가 -3~3으로 이동
-    float angle = glfwGetTime() * glm::pi<float>() * 0.5f;
-    // 왜 x가 sinf인가 생각을 해보았는데, y축은 사용하지 않고, 우선 x, z축만 사용한다고 가정하였을 때
-    // x축과 z축을 둘 다 +가 되는 방향으로 축을 다시 놓아보면, x축이 2차원 좌표계에선 y축에 속하고, z축이 x축에 속하기에
-    // 다음과 같은 식으로 x, z를 구할 수 있다고 생각
-    auto x = sinf(angle) * 10.0f; // * 10f은 반지름의 길이. 원점을 기준으로 거리를 10만큼 벌림
-    auto z = cosf(angle) * 10.0f;
-    auto cameraPos = glm::vec3(x, 0.0f, z);
-    auto cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    auto cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-    auto view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+    auto view = glm::lookAt(
+        m_cameraPos,
+        m_cameraPos + m_cameraFront, // 지금 바라보는 방향이 중요하기에, 현재 카메라 위치를 기준으로 임의의 1만큼 떨어진 타겟 구할 수 있음
+        m_cameraUp
+    );
 
     for (size_t i = 0; i < cubePositions.size(); i++){
         auto& pos = cubePositions[i];
