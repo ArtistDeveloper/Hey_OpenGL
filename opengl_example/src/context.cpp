@@ -134,27 +134,21 @@ void Context::Render()
 
     m_program->Use();
 
-    // near: z축으로 0~0.01까지 자름, far: 20.0 뒤편에 있는 것도 절삭
-    auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 20.0f);
+    // near: z축으로 0~0.01까지 자름, far: 20.0 뒤편에 있는 것도 절삭. far은 너무 큰게 좋지 않다. 이유는 추후 설명
+    auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 30.0f);
 
     // x가 -3~3으로 이동
-    float x = sinf((float)glfwGetTime() * glm::pi<float>() * 2.0f) * 3.0f; // 2pi * time = 1초에 한 번 진동
-    auto cameraPos = glm::vec3(x, 0.0f, 3.0f); // z축으로 +3만큼 카메라 이동
-    auto cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f); // 카메라는 원점 방향을 바라 봄
+    float angle = glfwGetTime() * glm::pi<float>() * 0.5f;
+    // 왜 x가 sinf인가 생각을 해보았는데, y축은 사용하지 않고, 우선 x, z축만 사용한다고 가정하였을 때
+    // x축과 z축을 둘 다 +가 되는 방향으로 축을 다시 놓아보면, x축이 2차원 좌표계에선 y축에 속하고, z축이 x축에 속하기에
+    // 다음과 같은 식으로 x, z를 구할 수 있다고 생각
+    auto x = sinf(angle) * 10.0f; // * 10f은 반지름의 길이. 원점을 기준으로 거리를 10만큼 벌림
+    auto z = cosf(angle) * 10.0f;
+    auto cameraPos = glm::vec3(x, 0.0f, z);
+    auto cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
     auto cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    auto cameraZ = glm::normalize(cameraPos - cameraTarget);
-    auto cameraX = glm::normalize(glm::cross(cameraUp, cameraZ));
-    auto cameraY = glm::cross(cameraZ, cameraX);
-
-    auto cameraMat = glm::mat4(
-        glm::vec4(cameraX, 0.0f),
-        glm::vec4(cameraY, 0.0f),
-        glm::vec4(cameraZ, 0.0f),
-        glm::vec4(cameraPos, 1.0f)
-        );
-
-    auto view = glm::inverse(cameraMat);
+    auto view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
 
     for (size_t i = 0; i < cubePositions.size(); i++){
         auto& pos = cubePositions[i];
