@@ -30,6 +30,13 @@ void Context::ProcessInput(GLFWwindow* window)
         m_cameraPos -= cameraSpeed * cameraUp;
 }
 
+void Context::Reshape(int width, int height)
+{
+    m_width = width;
+    m_height = height;
+    glViewport(0, 0, m_width, m_height);
+}
+
 bool Context::Init()
 {
     // [x, y, z, s, t] - s, t: texture 좌표
@@ -143,7 +150,7 @@ void Context::Render()
     m_program->Use();
 
     // near: z축으로 0~0.01까지 자름, far: 20.0 뒤편에 있는 것도 절삭. far은 너무 큰게 좋지 않다. 이유는 추후 설명
-    auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 30.0f);
+    auto projection = glm::perspective(glm::radians(45.0f), (float)m_width / (float)m_height, 0.01f, 30.0f);
 
     auto view = glm::lookAt(
         m_cameraPos,

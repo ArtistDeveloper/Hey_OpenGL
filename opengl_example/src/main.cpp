@@ -7,7 +7,8 @@
 void OnFramebufferSizeChange(GLFWwindow *window, int width, int height)
 {
     SPDLOG_INFO("framebuffer size change: ({} x {})", width, height);
-    glViewport(0, 0, width, height); // OpenGL이 그림을 그릴 화면의 위치와 범위를 지정
+    auto context = reinterpret_cast<Context *>(glfwGetWindowUserPointer(window));
+    context->Reshape(width, height);
 }
 
 // mods: modifier
@@ -83,6 +84,7 @@ int main(int argc, const char **argv)
         glfwTerminate();
         return -1;
     }
+    glfwSetWindowUserPointer(window, context.get());
 
     // 윈도우 생성 직후 프레임버퍼 변경 이벤트가 발생하지 않으므로, 첫 호출은 수동으로
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);

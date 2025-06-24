@@ -16,7 +16,8 @@ class Context
 public:
     static ContextUPtr Create();
     void Render();
-    void ProcessInput(GLFWwindow* window);
+    void ProcessInput(GLFWwindow *window);
+    void Reshape(int width, int hegiht);
 
 private:
     Context() {}
@@ -37,6 +38,9 @@ private:
     // 2. Front: 이 방향으로 바라보고 있다.
     glm::vec3 m_cameraFront{glm::vec3(0.0f, 0.0f, -1.0f)}; // 카메라가 z축으로 3만큼 떨어져있는 상황에서 -1을 바라보고 있다
     glm::vec3 m_cameraUp{glm::vec3(0.0f, 1.0f, 0.0f)};
+
+    int m_width{WINDOW_WIDTH};
+    int m_height{WINDOW_HEIGHT};
 };
 
 #endif // __CONTEXT_H__
