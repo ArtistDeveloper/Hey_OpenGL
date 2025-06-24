@@ -136,10 +136,25 @@ void Context::Render()
 
     // near: z축으로 0~0.01까지 자름, far: 20.0 뒤편에 있는 것도 절삭
     auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 20.0f);
-    // 만약 z축을 view matrix로 -3까지 밀어주지 않으면, 원점에 있는 큐브 중심에 카메라가 들어가있게 됨
-    auto view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-    // view 설명: projection * view * model이 존재하는데, 여기서 view의 의미는
-    // model 오브젝트를 그리기 전에, z축으로 3만큼 밀어서 그림을 그리라는 의미가 된다고 함 (실제 행렬에 들어가는 값은 -3이 맞음)
+
+    // x가 -3~3으로 이동
+    float x = sinf((float)glfwGetTime() * glm::pi<float>() * 2.0f) * 3.0f; // 2pi * time = 1초에 한 번 진동
+    auto cameraPos = glm::vec3(x, 0.0f, 3.0f); // z축으로 +3만큼 카메라 이동
+    auto cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f); // 카메라는 원점 방향을 바라 봄
+    auto cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+    auto cameraZ = glm::normalize(cameraPos - cameraTarget);
+    auto cameraX = glm::normalize(glm::cross(cameraUp, cameraZ));
+    auto cameraY = glm::cross(cameraZ, cameraX);
+
+    auto cameraMat = glm::mat4(
+        glm::vec4(cameraX, 0.0f),
+        glm::vec4(cameraY, 0.0f),
+        glm::vec4(cameraZ, 0.0f),
+        glm::vec4(cameraPos, 1.0f)
+        );
+
+    auto view = glm::inverse(cameraMat);
 
     for (size_t i = 0; i < cubePositions.size(); i++){
         auto& pos = cubePositions[i];
