@@ -18,6 +18,8 @@ public:
     void Render();
     void ProcessInput(GLFWwindow *window);
     void Reshape(int width, int hegiht);
+    void MouseMove(double x, double y); // 마우스가 움직였을 때 pitch, yaw값 변경
+    void MouseButton(int button, int action, double x, double y);
 
 private:
     Context() {}
@@ -31,6 +33,11 @@ private:
     TextureUPtr m_texture2;
 
     // camera parameter
+    // 60분법 사용
+    bool m_cameraControl{false};
+    glm::vec2 m_prevMousePos{glm::vec2(0.0f)};
+    float m_cameraPitch{0.0f};
+    float m_cameraYaw{0.0f};
     glm::vec3 m_cameraPos{glm::vec3(0.0f, 0.0f, 3.0f)};
     // cameraTarget이 아니라, Front 표현을 사용했다.
     // Camera가 바라보는 방향을 결정할 때 두 가지 방법이 있다.

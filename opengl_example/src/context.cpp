@@ -11,6 +11,9 @@ ContextUPtr Context::Create()
 
 void Context::ProcessInput(GLFWwindow* window)
 {
+    if (!m_cameraControl)
+        return;
+
     const float cameraSpeed = 0.05f;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         m_cameraPos += cameraSpeed * m_cameraFront;
@@ -28,6 +31,42 @@ void Context::ProcessInput(GLFWwindow* window)
         m_cameraPos += cameraSpeed * cameraUp;
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         m_cameraPos -= cameraSpeed * cameraUp;
+}
+
+void Context::MouseMove(double x, double y)
+{
+    if (!m_cameraControl)
+        return;
+    auto pos = glm::vec2((float)x, (float)y);
+    auto deltaPos = pos - m_prevMousePos;
+
+    const float cameraRotSpeed = 0.8f;
+    m_cameraYaw -= deltaPos.x * cameraRotSpeed; // x
+    m_cameraPitch -= deltaPos.y * cameraRotSpeed;
+
+    if (m_cameraYaw < 0.0f)   m_cameraYaw += 360.0f;
+    if (m_cameraYaw > 360.0f) m_cameraYaw -= 360.0f;
+
+    if (m_cameraPitch > 89.0f)  m_cameraPitch = 89.0f;
+    if (m_cameraPitch < -89.0f) m_cameraPitch = -89.0f;
+
+    m_prevMousePos = pos;    
+}
+
+void Context::MouseButton(int button, int action, double x, double y) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT)
+    {
+        if (action == GLFW_PRESS)
+        {
+            // 마우스 조작 시작 시점에 현재 마우스 커서 위치 저장
+            m_prevMousePos = glm::vec2((float)x, (float)y);
+            m_cameraControl = true;
+        }
+        else if (action == GLFW_RELEASE)
+        {
+            m_cameraControl = false;
+        }
+    }
 }
 
 void Context::Reshape(int width, int height)
@@ -148,6 +187,13 @@ void Context::Render()
     glEnable(GL_DEPTH_TEST);
 
     m_program->Use();
+
+    m_cameraFront = 
+	    glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraYaw), glm::vec3(0.0f, 1.0f, 0.0f)) * // pitch만큼 회전 된 것을 yaw만큼 회전
+        glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraPitch), glm::vec3(1.0f, 0.0f, 0.0f)) * // x축으로 pitch만큼 회전
+        glm::vec4(0.0f, 0.0f, -1.0f, 0.0f); // 방향 벡터
+        // -z축 방향인데, 동차좌표계를 사용하긴 하는데 마지막 값이 0인 이유는 1은 점이고, 0은 벡터라는 의미이다.
+        // 0이 들어가면 평행이동이 안됨. 지금은 평행이동 안할거라 0넣어 놓은 것
 
     // near: z축으로 0~0.01까지 자름, far: 20.0 뒤편에 있는 것도 절삭. far은 너무 큰게 좋지 않다. 이유는 추후 설명
     auto projection = glm::perspective(glm::radians(45.0f), (float)m_width / (float)m_height, 0.01f, 30.0f);
